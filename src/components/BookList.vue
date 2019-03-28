@@ -1,8 +1,9 @@
 <template>
   <div>
     <h1>{{title}}</h1>
+    <input v-model="searchInput" type="text" placeholder="Search Books"/>
     <ul>
-      <book-item v-for='book in books' :key='book.id' :book='book'></book-item>
+      <book-item v-for='book in searchedBooks' :key='book.id' :book='book'></book-item>
     </ul>
     <br><hr>
     <book-form @addBook='appendBook'></book-form>
@@ -37,12 +38,20 @@ export default {
         "bought",
         "borrowed"
       ],
-      holding: "bought"
+      holding: "bought",
+      searchInput: ""
     };
   },
   computed: {
     filteredBooks() {
       return _.filter(this.books, ["ownership", this.holding]);
+    },
+    searchedBooks() {
+      const searchFilter = book => {
+        return book.title.toLowerCase().match(this.searchInput.toLowerCase());
+      };
+
+      return _.filter(this.books, searchFilter);
     }
   },
   components: {
